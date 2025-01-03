@@ -6,8 +6,8 @@
 #include <chrono>
 #include <thread>
 
-#define WIDTH 60
-#define HEIGHT 30
+#define WIDTH 40
+#define HEIGHT 20
 #define SPEED 0.1
 #define SPEED_INC 0.015
 
