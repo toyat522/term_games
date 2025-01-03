@@ -36,7 +36,7 @@ void Game::initialize() {
 }
 
 void Game::start() {
-    _snake.reset(WIDTH / 2, HEIGHT / 2, Element::Right);
+    _snake.reset(WIDTH / 2, HEIGHT / 2, SPEED, Element::Right);
 
     _isGameOver = false;
     _score = 0;

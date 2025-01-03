@@ -26,7 +26,7 @@ public:
         _bodies.push_back(std::make_shared<Body>(_x, _y, _color, _win));
     }
 
-    void reset(int x, int y, Dir dir);
+    void reset(int x, int y, double vel, Dir dir);
     void setDir(Dir dir);
     void onTick();
     void update();

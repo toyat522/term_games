@@ -1,8 +1,9 @@
 #include "snake.h"
 
-void Snake::reset(int x, int y, Dir dir) {
+void Snake::reset(int x, int y, double vel, Dir dir) {
     _x = x;
     _y = y;
+    _vel = vel;
     _dir = dir;
     _next_dir = dir;
     _bodies = {std::make_shared<Body>(_x, _y, _color, _win)};
