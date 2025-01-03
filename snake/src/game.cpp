@@ -28,11 +28,19 @@ void Game::initialize() {
     _game_win = newwin(HEIGHT, WIDTH, 1, 0);
     _snake = Snake(WIDTH / 2, HEIGHT / 2, SPEED, SPEED_INC, _game_win);
     _apple = Apple(_game_win);
-    _apple.move();
 
     _elements.push_back(&_apple);
     _elements.push_back(&_snake);
-    _isRunning = true;
+
+    start();
+}
+
+void Game::start() {
+    _snake.reset(WIDTH / 2, HEIGHT / 2, Element::Right);
+
+    _isGameOver = false;
+    _score = 0;
+    _apple.move();
 }
 
 void Game::run() {
@@ -68,7 +76,10 @@ void Game::_handleInput() {
         case 'q':
             _isRunning = false;
             break;
-        case KEY_UP: 
+        case 'r':
+            start();
+            break;
+        case KEY_UP:
             _snake.setDir(Snake::Dir::Up);
             break;
         case KEY_LEFT:

@@ -1,5 +1,13 @@
 #include "snake.h"
 
+void Snake::reset(int x, int y, Dir dir) {
+    _x = x;
+    _y = y;
+    _dir = dir;
+    _next_dir = dir;
+    _bodies = {std::make_shared<Body>(_x, _y, _color, _win)};
+}
+
 void Snake::grow() {
     int n = _bodies.size() - 1;
     _bodies.push_back(std::make_shared<Body>(

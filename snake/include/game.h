@@ -10,9 +10,10 @@
 
 class Game {
 public:
-    Game() : _isRunning(false), _isGameOver(false), _fps(60),
+    Game() : _isRunning(true), _isGameOver(false), _fps(60),
         _snake(_game_win), _apple(_game_win) {}
     void initialize();
+    void start();
     void run();
     void cleanup();
 
