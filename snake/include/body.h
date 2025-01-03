@@ -5,13 +5,8 @@
 
 class Body : public Element {
 public:
-    Body(double x, double y, int color, WINDOW* win) {
-        _x = x;
-        _y = y;
-        _color = color;
-        _to_draw = "\u25A0";
-        _win = win;
-    }
+    Body(int x, int y, int color, WINDOW* win) :
+        Element(x, y, color, "\u25A0", win) {}
 };
 
 #endif

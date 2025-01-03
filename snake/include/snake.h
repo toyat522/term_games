@@ -9,30 +9,36 @@
 
 class Snake : public Element {
 public:
-    enum Dir { Up = 0, Left, Down, Right };
 
-    Snake(WINDOW* win) {
-        Snake(0, 0, 0, Right, COLOR_GREEN, win);
-    }
+    Snake(WINDOW* win) : Snake(0, 0, 0, Right, win) {}
 
-    Snake(double x, double y, double vel, Dir dir, int color, WINDOW* win) {
-        _x = x;
-        _y = y;
-        _vel = vel;
-        _dir = dir;
-        _color = color;
-        _win = win;
-        _bodies.push_back(std::make_shared<Body>(x, y, color, win));
+    Snake(int x, int y, double vel, Dir dir, WINDOW* win) :
+        Snake(x, y, vel, dir, COLOR_GREEN, 0.02, win) {}
+
+    Snake(int x, int y, double vel, Dir dir, double vel_inc, WINDOW* win) :
+        Snake(x, y, vel, dir, COLOR_GREEN, vel_inc, win) {}
+
+    Snake(int x, int y, double vel, double vel_inc, WINDOW* win) :
+        Snake(x, y, vel, Right, COLOR_GREEN, vel_inc, win) {}
+
+    Snake(int x, int y, double vel, Dir dir, int color, double vel_inc, WINDOW* win) :
+        Element(x, y, vel, dir, color, win), _vel_inc(vel_inc) {
+        _bodies.push_back(std::make_shared<Body>(_x, _y, _color, _win));
     }
 
     void setDir(Dir dir);
+    void onTick();
     void update();
     void draw();
     void grow();
+    void speedUp();
+    bool isWallCollide();
+    bool isSelfCollide();
 
 private:
-    Dir _dir;
-    double _vel;
+    void _moveBodies();
+
+    double _vel_inc;
     std::vector<std::shared_ptr<Body>> _bodies;
 };
 

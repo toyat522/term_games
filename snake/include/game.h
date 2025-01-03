@@ -2,13 +2,16 @@
 #define GAME_H_
 
 #include "element.h"
+#include "apple.h"
 #include "snake.h"
 
+#include <memory>
 #include <vector>
 
 class Game {
 public:
-    Game() : _isRunning(false), _fps(60), _snake(_game_win) {}
+    Game() : _isRunning(false), _isGameOver(false), _fps(60),
+        _snake(_game_win), _apple(_game_win) {}
     void initialize();
     void run();
     void cleanup();
@@ -16,7 +19,10 @@ public:
 private:
     std::vector<Element*> _elements;
     WINDOW* _game_win;
+    WINDOW* _text_win;
 
+    int _score;
+    bool _isGameOver;
     bool _isRunning;
     int _fps;
     void _handleInput();
@@ -24,6 +30,7 @@ private:
     void _draw();
 
     Snake _snake;
+    Apple _apple;
 };
 
 #endif

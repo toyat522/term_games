@@ -1,5 +1,9 @@
 #include "element.h"
 
+void Element::setDir(Dir dir) {
+    _next_dir = dir;
+}
+
 void Element::setX(double x) {
     _x = x;
 }
@@ -8,20 +12,16 @@ void Element::setY(double y) {
     _y = y;
 }
 
-void Element::setVx(double vx) {
-    _vx = vx;
-}
-
-void Element::setVy(double vy) {
-    _vy = vy;
+Element::Dir Element::getDir() {
+    return _dir;
 }
 
 int Element::getX() {
-    return (int)_x;
+    return _x;
 }
 
 int Element::getY() {
-    return (int)_y;
+    return _y;
 }
 
 void Element::draw() {
@@ -30,7 +30,18 @@ void Element::draw() {
     wattroff(_win, COLOR_PAIR(_color));
 }
 
+void Element::onTick() {
+    _dir = _next_dir;
+    if (_dir == Element::Left) _x--;
+    else if (_dir == Element::Right) _x++;
+    else if (_dir == Element::Up) _y--;
+    else if (_dir == Element::Down) _y++;
+}
+
 void Element::update() {
-    _x += _vx;
-    _y += _vy;
+    _vel_counter += _vel;
+    if (_vel_counter >= 1) {
+        _vel_counter = 0;
+        onTick();
+    }
 }

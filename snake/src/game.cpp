@@ -1,6 +1,6 @@
 #include "game.h"
 
-#include <curses.h>
+#include <iostream>
 #include <ncurses.h>
 #include <locale.h>
 #include <chrono>
@@ -9,6 +9,7 @@
 #define WIDTH 60
 #define HEIGHT 30
 #define SPEED 0.1
+#define SPEED_INC 0.015
 
 void Game::initialize() {
     setlocale(LC_ALL, "en_US.UTF-8");
@@ -23,10 +24,13 @@ void Game::initialize() {
     init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
     init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
 
-    _game_win = newwin(HEIGHT, WIDTH, 0, 0);
-    _snake = Snake(WIDTH / 2, HEIGHT / 2, SPEED, Snake::Dir::Right, COLOR_GREEN, _game_win);
-    _snake.grow();
+    _text_win = newwin(1, WIDTH, 0, 0);
+    _game_win = newwin(HEIGHT, WIDTH, 1, 0);
+    _snake = Snake(WIDTH / 2, HEIGHT / 2, SPEED, SPEED_INC, _game_win);
+    _apple = Apple(_game_win);
+    _apple.move();
 
+    _elements.push_back(&_apple);
     _elements.push_back(&_snake);
     _isRunning = true;
 }
@@ -37,8 +41,11 @@ void Game::run() {
         auto startTime = std::chrono::steady_clock::now();
 
         _handleInput();
-        _update();
-        _draw();
+
+        if (!_isGameOver) {
+            _update();
+            _draw();
+        }
 
         auto elapsedTime = std::chrono::steady_clock::now() - startTime;
         auto sleepDuration = frameDuration - std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime);
@@ -49,6 +56,7 @@ void Game::run() {
 }
 
 void Game::cleanup() {
+    delwin(_text_win);
     delwin(_game_win);
     endwin();
 }
@@ -56,26 +64,51 @@ void Game::cleanup() {
 void Game::_handleInput() {
     int ch = getch();
     if (ch != ERR) {
-        if (ch == 'q') _isRunning = false;
-        else if (ch == 'w') _snake.setDir(Snake::Dir::Up);
-        else if (ch == 'a') _snake.setDir(Snake::Dir::Left);
-        else if (ch == 's') _snake.setDir(Snake::Dir::Down);
-        else if (ch == 'd') _snake.setDir(Snake::Dir::Right);
+        switch (ch) {
+        case 'q':
+            _isRunning = false;
+            break;
+        case KEY_UP: 
+            _snake.setDir(Snake::Dir::Up);
+            break;
+        case KEY_LEFT:
+            _snake.setDir(Snake::Dir::Left);
+            break;
+        case KEY_DOWN:
+            _snake.setDir(Snake::Dir::Down);
+            break;
+        case KEY_RIGHT:
+            _snake.setDir(Snake::Dir::Right);
+        }
     }
 }
 
 void Game::_update() {
+    if (_snake.getX() == _apple.getX() && _snake.getY() == _apple.getY()) {
+        _snake.grow();
+        _snake.speedUp();
+        _apple.move();
+        _score++;
+    }
+
+    if (_snake.isWallCollide() || _snake.isSelfCollide()) {
+        _isGameOver = true;
+    }
+
     for (auto& element : _elements) {
         element->update();
     }
 }
 
 void Game::_draw() {
+    werase(_text_win);
     werase(_game_win);
+    mvwaddstr(_text_win, 0, 0, ("score: " + std::to_string(_score)).c_str());
     for (auto& element : _elements) {
         element->draw();
     }
     box(_game_win, 0, 0);
+    wrefresh(_text_win);
     wrefresh(_game_win);
 }
 

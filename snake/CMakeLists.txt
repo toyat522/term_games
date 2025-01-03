@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(include)
 
 set(SOURCES
+    src/apple.cpp
     src/element.cpp
     src/game.cpp
     src/snake.cpp
